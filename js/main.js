@@ -99,17 +99,40 @@
   setInterval(renderStatus, 60_000);
 
   /* ------------------------------------------------------------------
-     Navegação, progresso, parallax
+     Navegação, progresso, parallax e efeitos de rolagem
      ------------------------------------------------------------------ */
   const nav = $('#nav');
   const progress = $('#progress');
   const heroBg = $('.hero-bg');
   const tabsBar = $('#tabsBar');
   const bbar = $('#bbar');
-  const parallaxEls = $$('[data-parallax]');
+  const menuSection = $('#cardapio');
+  const cineFrame = $('#cineFrame');
   let lastY = scrollY;
   let ticking = false;
+  let stickTop = 0;
+  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
   body.classList.add('nav-visible');
+
+  // manifesto: quebra o texto em palavras para acendê-las com a rolagem
+  const manifesto = $('#manifesto');
+  let words = [];
+  let litCount = -1;
+  if (manifesto) {
+    const HL = ['hora,', 'fresco', 'voltar.'];
+    manifesto.innerHTML = manifesto.textContent.trim().split(/\s+/)
+      .map((w) => `<span class="w${HL.includes(w) ? ' hl' : ''}">${esc(w)}</span>`).join(' ');
+    words = $$('.w', manifesto);
+    if (reduce) words.forEach((w) => w.classList.add('on'));
+  }
+
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const measure = () => { stickTop = parseFloat(getComputedStyle(tabsBar).top) || 0; };
+
+  function applyHero(y) {
+    if (reduce || y > innerHeight * 1.2) return;
+    heroBg.style.transform = `translate3d(${mouse.x}px, ${y * 0.28 + mouse.y}px, 0)`;
+  }
 
   function onScroll() {
     const y = scrollY;
@@ -129,26 +152,62 @@
     const max = document.documentElement.scrollHeight - vh;
     progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
 
-    if (!reduce) {
-      if (y < vh * 1.2) heroBg.style.transform = `translate3d(0, ${y * 0.28}px, 0)`;
-      parallaxEls.forEach((img) => {
-        const r = img.parentElement.getBoundingClientRect();
-        if (r.bottom > 0 && r.top < vh) {
-          const k = parseFloat(img.dataset.parallax);
-          img.style.transform = `translate3d(0, ${(r.top - vh / 2) * -k}px, 0)`;
+    applyHero(y);
+
+    if (!reduce && words.length) {
+      const r = manifesto.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) {
+        const p = clamp01((vh * 0.85 - r.top) / (r.height + vh * 0.3));
+        const n = Math.round(p * words.length);
+        if (n !== litCount) {
+          words.forEach((w, i) => w.classList.toggle('on', i < n));
+          litCount = n;
         }
-      });
+      }
+    }
+
+    if (!reduce && cineFrame) {
+      const r = cineFrame.getBoundingClientRect();
+      if (r.top < vh && r.bottom > 0) {
+        cineFrame.style.setProperty('--p', clamp01((vh - r.top) / (vh * 0.85)).toFixed(3));
+      }
     }
 
     const tbTop = tabsBar.getBoundingClientRect().top;
-    const stickTop = parseFloat(getComputedStyle(tabsBar).top) || 0;
-    tabsBar.classList.toggle('stuck', tbTop <= stickTop + 1 && $('#cardapio').getBoundingClientRect().bottom > 200);
+    tabsBar.classList.toggle('stuck', tbTop <= stickTop + 1 && menuSection.getBoundingClientRect().bottom > 200);
 
     bbar.classList.toggle('show', y > vh * 0.6);
     ticking = false;
   }
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  const requestTick = () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } };
+  addEventListener('scroll', requestTick, { passive: true });
+  addEventListener('resize', () => {
+    measure();
+    if (innerWidth > 1100 && body.classList.contains('menu-open')) setMenu(false);
+    requestTick();
+  });
+  // a altura do topo muda quando o menu some/aparece: remede ao fim da transição
+  tabsBar.addEventListener('transitionend', measure);
+  measure();
   onScroll();
+
+  // parallax sutil da foto principal seguindo o mouse
+  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const hero = $('.hero');
+    let raf = 0;
+    const loop = () => {
+      mouse.x += (mouse.tx - mouse.x) * 0.08;
+      mouse.y += (mouse.ty - mouse.y) * 0.08;
+      applyHero(scrollY);
+      raf = Math.abs(mouse.tx - mouse.x) + Math.abs(mouse.ty - mouse.y) > 0.1 ? requestAnimationFrame(loop) : 0;
+    };
+    hero.addEventListener('pointermove', (e) => {
+      mouse.tx = (e.clientX / innerWidth - 0.5) * -24;
+      mouse.ty = (e.clientY / innerHeight - 0.5) * -16;
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
+    hero.addEventListener('pointerleave', () => { mouse.tx = 0; mouse.ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
+  }
 
   // link ativo no menu
   const navLinks = $$('.nav-links a');
@@ -171,10 +230,40 @@
     burger.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
     mmenu.setAttribute('aria-hidden', String(!open));
     if (open) { nav.classList.remove('hide'); nav.classList.add('scrolled'); }
-    else onScroll();
+    else requestTick();
   }
   burger.addEventListener('click', () => setMenu(!body.classList.contains('menu-open')));
   $$('a', mmenu).forEach((a) => a.addEventListener('click', () => setMenu(false)));
+
+  /* ------------------------------------------------------------------
+     Cursor (só mouse): ponto vermelho que vira "Ver" sobre os pratos
+     ------------------------------------------------------------------ */
+  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const cur = $('#cursor');
+    const dot = $('span', cur);
+    const pos = { x: -100, y: -100, tx: -100, ty: -100 };
+    body.classList.add('has-cursor');
+    const tick = () => {
+      pos.x += (pos.tx - pos.x) * 0.22;
+      pos.y += (pos.ty - pos.y) * 0.22;
+      cur.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      pos.tx = e.clientX; pos.ty = e.clientY;
+      const t = e.target;
+      const view = t.closest('.dish, .fav, .ig, .mode-media');
+      const link = !view && t.closest('a, button, input, textarea, label, [role="tab"]');
+      const label = view ? (view.classList.contains('ig') ? 'Seguir' : 'Ver') : '';
+      if (dot.dataset.label !== label) dot.dataset.label = label;
+      cur.classList.toggle('is-view', !!view && !t.closest('.ctl'));
+      cur.classList.toggle('is-link', !!link || !!t.closest('.ctl'));
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => cur.classList.add('is-hidden'));
+    document.addEventListener('pointerenter', () => cur.classList.remove('is-hidden'));
+  }
 
   /* ------------------------------------------------------------------
      Reveal on scroll + contador + mapa preguiçoso
@@ -347,7 +436,7 @@
 
   function renderTabs() {
     tabs.insertAdjacentHTML('beforeend', CATS.map((c) =>
-      `<button type="button" class="tab" role="tab" data-cat="${c.id}" aria-selected="${c.id === state.cat}">${esc(c.label)}${c.jp ? ` <small lang="ja">${c.jp}</small>` : ''}</button>`
+      `<button type="button" class="tab" role="tab" data-cat="${c.id}" aria-controls="menuGrid" aria-selected="${c.id === state.cat}">${esc(c.label)}${c.jp ? ` <small lang="ja">${c.jp}</small>` : ''}</button>`
     ).join(''));
   }
   function moveInd(animate = true) {
@@ -371,6 +460,7 @@
   function renderGrid() {
     const list = MENU.filter(matches);
     empty.hidden = list.length > 0;
+    $('#menuCount').textContent = `${list.length} ${list.length === 1 ? 'prato encontrado' : 'pratos encontrados'}`;
     const grouped = state.cat === 'all' && !state.q;
     let html = '';
     let i = 0;

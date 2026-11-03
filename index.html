@@ -7,15 +7,24 @@
   <meta name="description" content="Restaurante Tokyo Maringá: buffet por quilo e rodízio completo de culinária japonesa no Shopping Avenida Center. Sushis, sashimis, hots, temakis e pratos quentes preparados na hora.">
   <meta name="theme-color" content="#0b0908">
   <meta name="color-scheme" content="dark">
-  <meta property="og:title" content="Restaurante Tokyo Maringá">
-  <meta property="og:description" content="O melhor da culinária japonesa em Maringá. Buffet por Kg & Rodízio Completo.">
-  <meta property="og:image" content="img/hero.jpg">
-  <meta property="og:type" content="restaurant">
+  <link rel="canonical" href="https://thomasanjoscorrea-jpg.github.io/tokyo-maringa/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Restaurante Tokyo Maringá">
+  <meta property="og:title" content="Restaurante Tokyo Maringá · Culinária Japonesa">
+  <meta property="og:description" content="Buffet por Kg & Rodízio Completo no Shopping Avenida Center. Monte seu pedido e envie pelo WhatsApp.">
+  <meta property="og:url" content="https://thomasanjoscorrea-jpg.github.io/tokyo-maringa/">
+  <meta property="og:image" content="https://thomasanjoscorrea-jpg.github.io/tokyo-maringa/img/hero-m.jpg">
+  <meta property="og:image:alt" content="Niguiri de salmão segurado com hashi sobre fundo preto">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="img/logo.jpg">
+  <link rel="apple-touch-icon" href="img/logo.jpg">
+  <script>document.documentElement.classList.add('js');</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="img/hero-m.jpg" media="(max-width: 860px)" fetchpriority="high">
+  <link rel="preload" as="image" href="img/hero.jpg" media="(min-width: 861px)" fetchpriority="high">
   <link rel="stylesheet" href="css/style.css">
   <script type="application/ld+json">
   {
@@ -100,8 +109,14 @@
   <main>
     <!-- ===================== HERO ===================== -->
     <section class="hero" id="top">
-      <div class="hero-bg" aria-hidden="true"><img src="img/hero.jpg" alt="" id="heroImg"></div>
+      <div class="hero-bg" aria-hidden="true">
+        <picture>
+          <source media="(max-width: 860px)" srcset="img/hero-m.jpg">
+          <img src="img/hero.jpg" alt="" id="heroImg" fetchpriority="high" decoding="async">
+        </picture>
+      </div>
       <div class="hero-shade" aria-hidden="true"></div>
+      <p class="hero-vert" aria-hidden="true" lang="ja">東京 · 寿司 · 和食</p>
 
       <div class="wrap hero-content">
         <p class="eyebrow hero-in" style="--d:0"><span class="pulse"></span>Restaurante oriental · Maringá</p>
@@ -134,6 +149,14 @@
         <span>Sushi</span><i>✦</i><span>Sashimi</span><i>✦</i><span>Hot Filadélfia</span><i>✦</i><span>Temaki</span><i>✦</i><span>Jô Maçaricado</span><i>✦</i><span>Yakisoba</span><i>✦</i><span>Guioza</span><i>✦</i><span>Lámen</span><i>✦</i>
       </div>
     </div>
+
+    <!-- ===================== MANIFESTO ===================== -->
+    <section class="manifesto" aria-label="Nossa filosofia">
+      <div class="wrap">
+        <p class="kicker"><span lang="ja">心</span> Nossa filosofia</p>
+        <p class="manifesto-text" id="manifesto">Cada peça é montada na hora, com arroz no ponto, peixe fresco e o cuidado de quem respeita o ingrediente. Sem pressa na cozinha, para que você tenha pressa de voltar.</p>
+      </div>
+    </section>
 
     <!-- ===================== EXPERIENCES ===================== -->
     <section class="section modes" id="experiencias">
@@ -213,10 +236,22 @@
       </div>
 
       <div class="wrap">
-        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
+        <p class="sr-only" id="menuCount" aria-live="polite"></p>
+        <div class="menu-grid" id="menuGrid"></div>
         <div class="menu-empty" id="menuEmpty" hidden>
           <p class="menu-empty-k" lang="ja">残念</p>
           <p>Nada encontrado com esse filtro. Que tal provar um <button type="button" class="linkish" data-open="hot-filadelfia">Hot Filadélfia</button>?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CINEMATIC BAND ===================== -->
+    <section class="cine" aria-label="Combinado de sashimis">
+      <div class="cine-frame" id="cineFrame">
+        <img src="img/platter.jpg" alt="Grande travessa de sashimis de salmão, niguiris e uramakis" loading="lazy" decoding="async">
+        <div class="cine-caption">
+          <p class="cine-jp" lang="ja">いただきます</p>
+          <p class="cine-line">Bom apetite começa<br>antes da primeira mordida.</p>
         </div>
       </div>
     </section>
@@ -240,7 +275,6 @@
 
     <!-- ===================== SPACE ===================== -->
     <section class="section space" id="espaco">
-      <div class="space-bg" aria-hidden="true"><img src="img/ambiente.jpg" alt="" loading="lazy" data-parallax="0.12"></div>
       <div class="wrap space-inner">
         <div class="space-copy reveal">
           <p class="kicker"><span lang="ja">おもてなし</span> Omotenashi</p>
@@ -438,6 +472,8 @@
   </aside>
 
   <div class="toast" id="toast" role="status" aria-live="polite"><img alt=""><span></span><button type="button" data-open-cart>Ver pedido</button></div>
+
+  <div class="cursor" id="cursor" aria-hidden="true"><span></span></div>
 
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
