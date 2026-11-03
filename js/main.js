@@ -16,8 +16,7 @@
   const body = document.body;
   const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const isMobile = () => matchMedia('(max-width: 860px)').matches;
+    const isMobile = () => matchMedia('(max-width: 860px)').matches;
   const norm = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const store = {
@@ -37,7 +36,7 @@
     body.classList.add('loaded');
     if (pl) { pl.classList.add('done'); setTimeout(() => pl.remove(), 1000); }
   }
-  const minShow = reduce ? 0 : 1150;
+  const minShow = reduce ? 0 : 700;
   addEventListener('load', () => setTimeout(finishLoad, Math.max(0, minShow - (performance.now() - t0))));
   setTimeout(finishLoad, 3200);
 
@@ -221,92 +220,6 @@
     mapIO.disconnect();
   }, { rootMargin: '400px' });
   mapIO.observe(map);
-
-  /* ------------------------------------------------------------------
-     Tilt 3D nos cards de experiência (só mouse)
-     ------------------------------------------------------------------ */
-  if (fine && !reduce) {
-    $$('[data-tilt]').forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transition = 'transform 120ms linear, border-color 300ms ease, box-shadow 300ms ease';
-        card.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 6}deg) translateZ(0)`;
-      });
-      card.addEventListener('pointerleave', () => {
-        card.style.transition = '';
-        card.style.transform = '';
-      });
-    });
-  }
-
-  /* ------------------------------------------------------------------
-     Pétalas de sakura (canvas, pausa fora da tela)
-     ------------------------------------------------------------------ */
-  (function sakura() {
-    const cv = $('#sakura');
-    if (!cv || reduce) return;
-    const ctx = cv.getContext('2d');
-    const dpr = Math.min(2, devicePixelRatio || 1);
-    let W = 0, H = 0, petals = [], running = false, raf = 0;
-    const COLORS = ['#ffd1dc', '#ffb7c5', '#ffe4ea', '#f7c6a3', '#ffc0cb'];
-
-    function resize() {
-      W = cv.clientWidth; H = cv.clientHeight;
-      cv.width = W * dpr; cv.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const n = W < 700 ? 14 : 28;
-      petals = Array.from({ length: n }, () => spawn(true));
-    }
-    function spawn(init) {
-      return {
-        x: Math.random() * W,
-        y: init ? Math.random() * H : -20,
-        s: 6 + Math.random() * 8,
-        vy: 0.35 + Math.random() * 0.7,
-        vx: -0.2 + Math.random() * 0.6,
-        r: Math.random() * Math.PI * 2,
-        vr: (Math.random() - 0.5) * 0.03,
-        sw: Math.random() * Math.PI * 2,
-        c: COLORS[(Math.random() * COLORS.length) | 0],
-        a: 0.45 + Math.random() * 0.45,
-      };
-    }
-    function draw(p) {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.r);
-      ctx.scale(1, Math.abs(Math.cos(p.sw)) * 0.6 + 0.4);
-      ctx.globalAlpha = p.a;
-      ctx.fillStyle = p.c;
-      ctx.beginPath();
-      ctx.moveTo(0, -p.s);
-      ctx.bezierCurveTo(p.s * 0.9, -p.s * 0.6, p.s * 0.7, p.s * 0.6, 0, p.s);
-      ctx.bezierCurveTo(-p.s * 0.7, p.s * 0.6, -p.s * 0.9, -p.s * 0.6, 0, -p.s);
-      ctx.fill();
-      ctx.restore();
-    }
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      for (let i = 0; i < petals.length; i++) {
-        const p = petals[i];
-        p.sw += 0.02;
-        p.x += p.vx + Math.sin(p.sw) * 0.5;
-        p.y += p.vy;
-        p.r += p.vr;
-        if (p.y > H + 20 || p.x > W + 30) petals[i] = spawn(false);
-        draw(p);
-      }
-      if (running) raf = requestAnimationFrame(frame);
-    }
-    const start = () => { if (!running) { running = true; raf = requestAnimationFrame(frame); } };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
-    resize();
-    addEventListener('resize', resize);
-    new IntersectionObserver(([en]) => (en.isIntersecting ? start() : stop())).observe(cv);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-  })();
 
   /* ------------------------------------------------------------------
      Carrinho

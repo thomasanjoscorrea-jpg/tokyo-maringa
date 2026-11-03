@@ -14,11 +14,34 @@
   <link rel="icon" href="img/logo.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Outfit:wght@300;400;500;600;700&family=Shippori+Mincho:wght@500;700;800&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="img/hero.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
   <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Restaurante Tokyo Maringá",
+    "servesCuisine": ["Japonesa", "Oriental"],
+    "description": "Buffet por quilo e rodízio completo de culinária japonesa no Shopping Avenida Center, em Maringá.",
+    "image": "img/hero.jpg",
+    "logo": "img/logo.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Av. São Paulo, 743 - Shopping Avenida Center",
+      "addressLocality": "Maringá",
+      "addressRegion": "PR",
+      "postalCode": "87020-035",
+      "addressCountry": "BR"
+    },
+    "sameAs": ["https://www.instagram.com/tokyomaringa/"],
+    "acceptsReservations": true,
+    "hasMenu": "#cardapio"
+  }
+  </script>
 </head>
 <body>
+  <a class="skip" href="#cardapio">Pular para o cardápio</a>
 
   <!-- ===================== PRELOADER ===================== -->
   <div class="preloader" id="preloader" aria-hidden="true">
@@ -61,7 +84,6 @@
 
   <!-- Mobile menu -->
   <div class="mmenu" id="mmenu" aria-hidden="true">
-    <div class="mmenu-kanji" aria-hidden="true">東京</div>
     <nav class="mmenu-links" aria-label="Menu">
       <a href="#experiencias"><small>01</small>Buffet &amp; Rodízio</a>
       <a href="#cardapio"><small>02</small>Cardápio</a>
@@ -80,8 +102,6 @@
     <section class="hero" id="top">
       <div class="hero-bg" aria-hidden="true"><img src="img/hero.jpg" alt="" id="heroImg"></div>
       <div class="hero-shade" aria-hidden="true"></div>
-      <canvas class="sakura" id="sakura" aria-hidden="true"></canvas>
-      <div class="hero-kanji" aria-hidden="true"><span>東</span><span>京</span></div>
 
       <div class="wrap hero-content">
         <p class="eyebrow hero-in" style="--d:0"><span class="pulse"></span>Restaurante oriental · Maringá</p>
@@ -305,7 +325,7 @@
   <footer class="footer">
     <div class="wrap footer-inner">
       <div class="footer-brand">
-        <img src="img/logo.jpg" alt="Restaurante Tokyo" width="72" height="72">
+        <img src="img/logo.jpg" alt="Restaurante Tokyo" width="56" height="56" loading="lazy">
         <p>O melhor da culinária japonesa<br>em Maringá. Buffet por Kg &amp; Rodízio Completo.</p>
       </div>
       <nav class="footer-links" aria-label="Rodapé">
@@ -315,7 +335,6 @@
         <a href="#visite">Horários</a>
         <a data-ig href="#" target="_blank" rel="noopener">Instagram</a>
       </nav>
-      <p class="footer-kanji" aria-hidden="true">東京</p>
     </div>
     <div class="wrap footer-bottom">
       <small>© <span id="year">2026</span> Restaurante Tokyo Maringá. Todos os direitos reservados.</small>
