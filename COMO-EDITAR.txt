@@ -13,14 +13,23 @@ O QUE TROCAR ANTES DE PUBLICAR (tudo em js/data.js)
 
   Os preços, horários e o número de WhatsApp desta prévia são EXEMPLOS.
 
+CONFIRMAR COM O DONO
+  Os textos dizem que as peças são "montadas na hora" e que o peixe é
+  "fresco". Confirme que isso é verdade antes de publicar.
+
 FOTOS
   As fotos dos pratos são de banco de imagens gratuito (Unsplash),
-  usadas só para a prévia. O ideal é trocar pelas fotos reais da casa,
-  com o mesmo nome de arquivo dentro da pasta img.
+  usadas só para a prévia. Para trocar, coloque a foto real na pasta img
+  e atualize o caminho em js/data.js (aceita .jpg ou .webp).
+
+DOMÍNIO PRÓPRIO
+  Se o site ganhar um domínio (ex.: tokyomaringa.com.br), atualize o
+  endereço em index.html (canonical, og:url, og:image, JSON-LD),
+  em sitemap.xml e em robots.txt.
 
 RECURSOS
   - Cardápio interativo com abas, busca e filtros
   - Pedido montado no site e enviado pronto pelo WhatsApp
   - Sugestões de acompanhamento (aumenta o ticket médio)
-  - Status "Aberto agora / Fechado" automático pelos horários
+  - Status "Aberto / Fechado" automático pelos horários
   - Layout de aplicativo no celular, com barra de pedido fixa

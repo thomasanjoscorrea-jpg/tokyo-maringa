@@ -68,14 +68,14 @@
     for (const [a, b] of today) {
       if (m >= toMin(a) && m < toMin(b)) {
         const left = toMin(b) - m;
-        return { open: true, text: left <= 45 ? `Aberto · fecha em ${left} min` : `Aberto agora · até ${b}` };
+        return { open: true, text: left <= 45 ? `Aberto, fecha em ${left} min` : `Aberto até ${b}` };
       }
     }
-    for (const [a] of today) if (m < toMin(a)) return { open: false, text: `Fechado · abre hoje às ${a}` };
+    for (const [a] of today) if (m < toMin(a)) return { open: false, text: `Fechado. Abre hoje às ${a}` };
     for (let i = 1; i <= 7; i++) {
       const nd = (d + i) % 7;
       const sl = C.hours[nd];
-      if (sl && sl.length) return { open: false, text: `Fechado · abre ${i === 1 ? 'amanhã' : DAYS[nd].toLowerCase()} às ${sl[0][0]}` };
+      if (sl && sl.length) return { open: false, text: `Fechado. Abre ${i === 1 ? 'amanhã' : DAYS[nd].toLowerCase()} às ${sl[0][0]}` };
     }
     return { open: false, text: 'Fechado' };
   }
@@ -91,7 +91,7 @@
     const today = new Date().getDay();
     $('#hours').innerHTML = [1, 2, 3, 4, 5, 6, 0].map((d) => {
       const sl = C.hours[d] || [];
-      const txt = sl.length ? sl.map(([a, b]) => `${a}–${b}`).join(' · ') : 'Fechado';
+      const txt = sl.length ? sl.map(([a, b]) => `${a}–${b}`).join(' e ') : 'Fechado';
       return `<li class="${d === today ? 'today' : ''}"><span>${DAYS[d]}${d === today ? ' <small class="today-tag">hoje</small>' : ''}</span><span>${txt}</span></li>`;
     }).join('');
   }
@@ -395,7 +395,7 @@
   function showToast(id, n) {
     const d = byId[id];
     toast.querySelector('img').src = d.img;
-    toast.querySelector('span').textContent = `${n > 1 ? `${n}× ` : ''}${d.name} no pedido`;
+    toast.querySelector('span').textContent = `Adicionado: ${n > 1 ? `${n}× ` : ''}${d.name}`;
     toast.classList.add('show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
@@ -488,11 +488,39 @@
     if (!t || t.dataset.cat === state.cat) return;
     state.cat = t.dataset.cat;
     $$('.tab', tabs).forEach((b) => b.setAttribute('aria-selected', String(b === t)));
+    syncTabFocus();
     moveInd();
     t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', inline: 'center', block: 'nearest' });
     renderGrid();
     scrollToMenuTop();
   });
+  tabs.addEventListener('keydown', (e) => {
+    const list = $$('.tab', tabs);
+    const i = list.indexOf(document.activeElement);
+    if (i < 0) return;
+    let j = null;
+    if (e.key === 'ArrowRight') j = (i + 1) % list.length;
+    else if (e.key === 'ArrowLeft') j = (i - 1 + list.length) % list.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = list.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    list[j].focus();
+    list[j].click();
+  });
+  function syncTabFocus() {
+    $$('.tab', tabs).forEach((b) => b.setAttribute('tabindex', b.getAttribute('aria-selected') === 'true' ? '0' : '-1'));
+  }
+  $('#clearFilters').addEventListener('click', () => {
+    state.cat = 'all'; state.filter = 'all'; state.q = '';
+    $('#menuSearch').value = '';
+    $$('.chip').forEach((b) => b.classList.toggle('is-on', b.dataset.filter === 'all'));
+    $$('.tab', tabs).forEach((b) => b.setAttribute('aria-selected', String(b.dataset.cat === 'all')));
+    syncTabFocus();
+    moveInd();
+    renderGrid();
+  });
+
   $('#chips').addEventListener('click', (e) => {
     const c = e.target.closest('.chip');
     if (!c) return;
@@ -507,6 +535,7 @@
   });
 
   renderTabs();
+  syncTabFocus();
   renderGrid();
   requestAnimationFrame(() => moveInd(false));
   addEventListener('resize', () => moveInd(false));
@@ -620,12 +649,12 @@
 
   function pairHTML(id) {
     const d = byId[id];
-    return `<button type="button" class="pair" data-pair="${id}" aria-label="Adicionar ${esc(d.name)}, ${brl(d.price)}"><img src="${d.img}" alt="" loading="lazy"><div><b>${esc(d.name)}</b><small>${esc(d.pieces)} · ${brl(d.price)}</small></div><i aria-hidden="true">+</i></button>`;
+    return `<button type="button" class="pair" data-pair="${id}" aria-label="Adicionar ${esc(d.name)}, ${brl(d.price)}"><img src="${d.img}" alt="" loading="lazy"><div><b>${esc(d.name)}</b><small>${esc(d.pieces)}, ${brl(d.price)}</small></div><i aria-hidden="true">+</i></button>`;
   }
 
   function updateSheetTotal() {
     $('#sheetQty').textContent = sheetQty;
-    $('#sheetTotal').textContent = `· ${brl(byId[sheetId].price * sheetQty)}`;
+    $('#sheetTotal').textContent = `por ${brl(byId[sheetId].price * sheetQty)}`;
   }
   function openSheet(id) {
     const d = byId[id];
@@ -635,7 +664,7 @@
     const img = $('#sheetImg');
     img.src = d.img; img.alt = d.name;
     $('#sheetTitle').textContent = d.name;
-    $('#sheetPieces').textContent = `${d.pieces} · ${brl(d.price)}`;
+    $('#sheetPieces').textContent = `${d.pieces}, ${brl(d.price)}`;
     $('#sheetDesc').textContent = d.desc;
     $('#sheetBadges').innerHTML = badgesHTML(d).replace(/^<span class="badges">|<\/span>$/g, '');
     $('#sheetNote').value = (cart[id] && cart[id].note) || '';
