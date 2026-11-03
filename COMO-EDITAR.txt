@@ -1,0 +1,26 @@
+RESTAURANTE TOKYO MARINGÁ · PRÉVIA DO SITE
+==========================================
+
+COMO ABRIR
+  Dê dois cliques em index.html (abre no navegador).
+  Mantenha as pastas css, js e img junto do index.html.
+
+O QUE TROCAR ANTES DE PUBLICAR (tudo em js/data.js)
+  1. whatsapp  → número real do restaurante (ex.: 5544912345678)
+  2. hours     → horários reais de almoço e jantar de cada dia
+  3. price     → preços reais de cada prato
+  4. TOKYO_MENU → nomes, descrições e fotos dos pratos de verdade
+
+  Os preços, horários e o número de WhatsApp desta prévia são EXEMPLOS.
+
+FOTOS
+  As fotos dos pratos são de banco de imagens gratuito (Unsplash),
+  usadas só para a prévia. O ideal é trocar pelas fotos reais da casa,
+  com o mesmo nome de arquivo dentro da pasta img.
+
+RECURSOS
+  - Cardápio interativo com abas, busca e filtros
+  - Pedido montado no site e enviado pronto pelo WhatsApp
+  - Sugestões de acompanhamento (aumenta o ticket médio)
+  - Status "Aberto agora / Fechado" automático pelos horários
+  - Layout de aplicativo no celular, com barra de pedido fixa

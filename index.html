@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <title>Restaurante Tokyo Maringá · Culinária Japonesa</title>
+  <meta name="description" content="Restaurante Tokyo Maringá: buffet por quilo e rodízio completo de culinária japonesa no Shopping Avenida Center. Sushis, sashimis, hots, temakis e pratos quentes preparados na hora.">
+  <meta name="theme-color" content="#0b0908">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Restaurante Tokyo Maringá">
+  <meta property="og:description" content="O melhor da culinária japonesa em Maringá. Buffet por Kg & Rodízio Completo.">
+  <meta property="og:image" content="img/hero.jpg">
+  <meta property="og:type" content="restaurant">
+  <link rel="icon" href="img/logo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Outfit:wght@300;400;500;600;700&family=Shippori+Mincho:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="img/hero.jpg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===================== PRELOADER ===================== -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <div class="pl-logo-wrap"><img src="img/logo.jpg" class="pl-logo" alt=""></div>
+      <div class="pl-kanji">いらっしゃいませ</div>
+      <div class="pl-bar"><span></span></div>
+    </div>
+  </div>
+
+  <div class="progress" id="progress" aria-hidden="true"></div>
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#top" class="brand" aria-label="Restaurante Tokyo, início">
+        <img src="img/logo.jpg" alt="" width="44" height="44">
+        <span class="brand-txt"><b>TOKYO</b><small>Maringá</small></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Principal">
+        <a href="#experiencias">Buffet &amp; Rodízio</a>
+        <a href="#cardapio">Cardápio</a>
+        <a href="#favoritos">Favoritos</a>
+        <a href="#espaco">O Espaço</a>
+        <a href="#visite">Visite</a>
+      </nav>
+
+      <div class="nav-actions">
+        <span class="status" data-status><i></i><span>Carregando…</span></span>
+        <button class="cart-btn" type="button" data-open-cart aria-label="Abrir meu pedido">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7V6a3 3 0 0 1 6 0v1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="cart-count" data-cart-count>0</span>
+        </button>
+        <a class="btn btn-red btn-sm hide-mobile" data-wa="pedido" href="#" target="_blank" rel="noopener">Pedir agora</a>
+        <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mmenu"><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile menu -->
+  <div class="mmenu" id="mmenu" aria-hidden="true">
+    <div class="mmenu-kanji" aria-hidden="true">東京</div>
+    <nav class="mmenu-links" aria-label="Menu">
+      <a href="#experiencias"><small>01</small>Buffet &amp; Rodízio</a>
+      <a href="#cardapio"><small>02</small>Cardápio</a>
+      <a href="#favoritos"><small>03</small>Favoritos</a>
+      <a href="#espaco"><small>04</small>O Espaço</a>
+      <a href="#visite"><small>05</small>Visite</a>
+    </nav>
+    <div class="mmenu-foot">
+      <a class="btn btn-red btn-lg btn-block" data-wa="pedido" href="#" target="_blank" rel="noopener">Fazer pedido pelo WhatsApp</a>
+      <p data-address-short>Shopping Avenida Center · Maringá</p>
+    </div>
+  </div>
+
+  <main>
+    <!-- ===================== HERO ===================== -->
+    <section class="hero" id="top">
+      <div class="hero-bg" aria-hidden="true"><img src="img/hero.jpg" alt="" id="heroImg"></div>
+      <div class="hero-shade" aria-hidden="true"></div>
+      <canvas class="sakura" id="sakura" aria-hidden="true"></canvas>
+      <div class="hero-kanji" aria-hidden="true"><span>東</span><span>京</span></div>
+
+      <div class="wrap hero-content">
+        <p class="eyebrow hero-in" style="--d:0"><span class="pulse"></span>Restaurante oriental · Maringá</p>
+        <h1 class="hero-title">
+          <span class="line"><span>O Japão inteiro</span></span>
+          <span class="line"><span>cabe no seu <em>prato.</em></span></span>
+        </h1>
+        <p class="hero-sub hero-in" style="--d:3">Buffet por quilo e rodízio completo com sushis, sashimis, hots e pratos quentes feitos na hora. Tudo isso no coração de Maringá, no Shopping Avenida Center.</p>
+        <div class="hero-ctas hero-in" style="--d:4">
+          <a class="btn btn-red btn-lg" href="#cardapio">
+            Ver cardápio
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-ghost btn-lg" data-wa="reserva" href="#" target="_blank" rel="noopener">Reservar mesa</a>
+        </div>
+        <ul class="hero-proof hero-in" style="--d:5">
+          <li><b>22,6 mil</b><span>fãs no Instagram</span></li>
+          <li><b>Buffet</b><span>por quilo</span></li>
+          <li><b>Rodízio</b><span>completo</span></li>
+        </ul>
+      </div>
+
+      <a href="#experiencias" class="scroll-cue" aria-label="Rolar para baixo"><span></span></a>
+    </section>
+
+    <!-- ===================== MARQUEE ===================== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Sushi</span><i>✦</i><span>Sashimi</span><i>✦</i><span>Hot Filadélfia</span><i>✦</i><span>Temaki</span><i>✦</i><span>Jô Maçaricado</span><i>✦</i><span>Yakisoba</span><i>✦</i><span>Guioza</span><i>✦</i><span>Lámen</span><i>✦</i>
+        <span>Sushi</span><i>✦</i><span>Sashimi</span><i>✦</i><span>Hot Filadélfia</span><i>✦</i><span>Temaki</span><i>✦</i><span>Jô Maçaricado</span><i>✦</i><span>Yakisoba</span><i>✦</i><span>Guioza</span><i>✦</i><span>Lámen</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ===================== EXPERIENCES ===================== -->
+    <section class="section modes" id="experiencias">
+      <div class="wrap">
+        <header class="sec-head reveal">
+          <p class="kicker"><span lang="ja">二つの体験</span> Duas experiências</p>
+          <h2>Dois jeitos de <em>se render</em> ao Tokyo.</h2>
+          <p>Almoço rápido no meio da semana ou aquele jantar sem pressa com quem você gosta. Aqui, você escolhe como quer ser feliz.</p>
+        </header>
+
+        <div class="mode-grid">
+          <article class="mode-card reveal" data-tilt>
+            <div class="mode-media"><img src="img/harumaki.jpg" alt="Bandeja do buffet com harumakis dourados" loading="lazy"></div>
+            <div class="mode-body">
+              <span class="mode-tag">Pague pelo que comer</span>
+              <h3>Buffet por Kg</h3>
+              <p>Monte o prato do seu jeito: sushis, hots, saladas orientais, yakisoba, frituras crocantes e pratos quentes reabastecidos o tempo todo. Você escolhe, a gente pesa.</p>
+              <ul class="checks">
+                <li>Variedade de frios e quentes no mesmo prato</li>
+                <li>Ideal para o almoço do dia a dia</li>
+                <li>Rápido, prático e sem abrir mão do sabor</li>
+              </ul>
+              <a href="#visite" class="link-arrow">Ver horários <span>→</span></a>
+            </div>
+          </article>
+
+          <article class="mode-card mode-card--hot reveal" data-tilt>
+            <div class="mode-media"><img src="img/barca.jpg" alt="Barca de madeira repleta de sushis e uramakis" loading="lazy"></div>
+            <div class="mode-body">
+              <span class="mode-tag mode-tag--gold">À vontade</span>
+              <h3>Rodízio Completo</h3>
+              <p>Peças saindo da cozinha direto para a sua mesa, até você pedir arrego. Uramakis, hots, niguiris, sashimis, temakis e pratos quentes, sem limite e sem culpa.</p>
+              <ul class="checks">
+                <li>Peças preparadas na hora, uma rodada atrás da outra</li>
+                <li>Perfeito para celebrar com a família e os amigos</li>
+                <li>Do clássico ao maçaricado, tudo incluso</li>
+              </ul>
+              <a href="#" data-wa="reserva" target="_blank" rel="noopener" class="link-arrow">Reservar minha mesa <span>→</span></a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== MENU ===================== -->
+    <section class="section menu" id="cardapio">
+      <div class="wrap">
+        <header class="sec-head sec-head--row reveal">
+          <div>
+            <p class="kicker"><span lang="ja">お品書き</span> Cardápio</p>
+            <h2>Escolha com os olhos.<br><em>Peça com o coração.</em></h2>
+          </div>
+          <p>Toque em um prato para ver os detalhes, monte seu pedido e envie direto pelo WhatsApp, sem cadastro e sem complicação.</p>
+        </header>
+
+        <div class="menu-tools reveal">
+          <label class="search">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <input type="search" id="menuSearch" placeholder="Busque: salmão, hot, temaki…" autocomplete="off" enterkeyhint="search" aria-label="Buscar no cardápio">
+          </label>
+          <div class="chips" id="chips" role="group" aria-label="Filtros">
+            <button class="chip is-on" type="button" data-filter="all">Tudo</button>
+            <button class="chip" type="button" data-filter="top">🔥 Mais pedidos</button>
+            <button class="chip" type="button" data-filter="chef">⭐ Chef recomenda</button>
+            <button class="chip" type="button" data-filter="spicy">🌶️ Picante</button>
+            <button class="chip" type="button" data-filter="veg">🌿 Vegetariano</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs-bar" id="tabsBar">
+        <div class="wrap">
+          <div class="tabs" id="tabs" role="tablist" aria-label="Categorias">
+            <span class="tab-ind" id="tabInd" aria-hidden="true"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="menu-grid" id="menuGrid" aria-live="polite"></div>
+        <div class="menu-empty" id="menuEmpty" hidden>
+          <p class="menu-empty-k" lang="ja">残念</p>
+          <p>Nada encontrado com esse filtro. Que tal provar um <button type="button" class="linkish" data-open="hot-filadelfia">Hot Filadélfia</button>?</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FAVORITES ===================== -->
+    <section class="section favs" id="favoritos">
+      <div class="wrap">
+        <header class="sec-head sec-head--row reveal">
+          <div>
+            <p class="kicker"><span lang="ja">人気</span> Os mais pedidos</p>
+            <h2>Os queridinhos <em>de Maringá.</em></h2>
+          </div>
+          <div class="favs-nav">
+            <button type="button" class="round-btn" data-fav-prev aria-label="Anterior"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m15 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button type="button" class="round-btn" data-fav-next aria-label="Próximo"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </header>
+      </div>
+      <div class="favs-track" id="favsTrack"></div>
+    </section>
+
+    <!-- ===================== SPACE ===================== -->
+    <section class="section space" id="espaco">
+      <div class="space-bg" aria-hidden="true"><img src="img/ambiente.jpg" alt="" loading="lazy" data-parallax="0.12"></div>
+      <div class="wrap space-inner">
+        <div class="space-copy reveal">
+          <p class="kicker"><span lang="ja">おもてなし</span> Omotenashi</p>
+          <h2>Mais que comer.<br><em>É ser bem recebido.</em></h2>
+          <p>Omotenashi é a arte japonesa de receber bem, e é assim que a gente trabalha todos os dias. Ambiente acolhedor, atendimento atencioso e uma cozinha que respeita cada ingrediente.</p>
+          <div class="feats">
+            <div class="feat"><span class="feat-ic" lang="ja">鮮</span><div><b>Feito na hora</b><small>Peças montadas no momento do pedido</small></div></div>
+            <div class="feat"><span class="feat-ic" lang="ja">魚</span><div><b>Peixe selecionado</b><small>Salmão fresco com corte caprichado</small></div></div>
+            <div class="feat"><span class="feat-ic" lang="ja">家</span><div><b>Para todo mundo</b><small>Família, amigos, casal ou só você</small></div></div>
+            <div class="feat"><span class="feat-ic" lang="ja">町</span><div><b>No centro</b><small>Shopping Avenida Center, fácil de chegar</small></div></div>
+          </div>
+        </div>
+        <div class="space-photos">
+          <figure class="sp sp-1 reveal-img"><img src="img/lanternas.jpg" alt="Lanternas japonesas vermelhas acesas" loading="lazy"></figure>
+          <figure class="sp sp-2 reveal-img"><img src="img/overhead.jpg" alt="Mesa com combinado de sushis vista de cima" loading="lazy"></figure>
+          <figure class="sp sp-3 reveal-img"><img src="img/nigiri-chop.jpg" alt="Niguiri de salmão segurado com hashi" loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== INSTAGRAM ===================== -->
+    <section class="section insta">
+      <div class="wrap">
+        <header class="sec-head sec-head--center reveal">
+          <p class="kicker">@tokyomaringa</p>
+          <h2><span class="count" data-count="22600">22.600</span> pessoas já estão<br><em>com água na boca.</em></h2>
+          <p>Promoções, novidades e bastidores da cozinha. Siga a gente e não perca nenhuma.</p>
+        </header>
+        <div class="insta-grid">
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/joe.jpg" alt="Jô de salmão maçaricado" loading="lazy"><span>♥</span></a>
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/dragon.jpg" alt="Dragon roll" loading="lazy"><span>♥</span></a>
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/poke.jpg" alt="Poke de salmão" loading="lazy"><span>♥</span></a>
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/gyoza.jpg" alt="Guiozas grelhados" loading="lazy"><span>♥</span></a>
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/platter.jpg" alt="Grande combinado de sashimis" loading="lazy"><span>♥</span></a>
+          <a class="ig reveal-img" data-ig href="#" target="_blank" rel="noopener"><img src="img/hotroll.jpg" alt="Hot roll com hashi" loading="lazy"><span>♥</span></a>
+        </div>
+        <div class="center reveal"><a class="btn btn-ghost btn-lg" data-ig href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg>
+          Seguir @tokyomaringa</a></div>
+      </div>
+    </section>
+
+    <!-- ===================== VISIT / CTA ===================== -->
+    <section class="section visit" id="visite">
+      <div class="wrap">
+        <div class="hunger reveal">
+          <div class="hunger-sun" aria-hidden="true"></div>
+          <p class="kicker"><span lang="ja">いただきます</span> Itadakimasu</p>
+          <h2>Bateu a fome?<br><em>A gente já está com o hashi na mão.</em></h2>
+          <div class="hero-ctas">
+            <a class="btn btn-red btn-lg" data-wa="pedido" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+              Pedir pelo WhatsApp</a>
+            <a class="btn btn-ghost btn-lg" data-maps href="#" target="_blank" rel="noopener">Como chegar</a>
+          </div>
+        </div>
+
+        <div class="visit-grid">
+          <div class="visit-card reveal">
+            <h3>Horários</h3>
+            <p class="status status--lg" data-status><i></i><span>…</span></p>
+            <ul class="hours" id="hours"></ul>
+            <p class="fine">Horários sujeitos a alteração em feriados.</p>
+          </div>
+          <div class="visit-card reveal">
+            <h3>Onde estamos</h3>
+            <p class="addr" data-address>Shopping Avenida Center<br>Av. São Paulo, 743 · Centro<br>Maringá · PR</p>
+            <div class="visit-links">
+              <a class="link-arrow" data-maps href="#" target="_blank" rel="noopener">Abrir no Google Maps <span>→</span></a>
+              <a class="link-arrow" data-ig href="#" target="_blank" rel="noopener">Instagram <span>→</span></a>
+            </div>
+          </div>
+          <div class="visit-map reveal">
+            <iframe id="map" title="Mapa: Shopping Avenida Center, Maringá" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <img src="img/logo.jpg" alt="Restaurante Tokyo" width="72" height="72">
+        <p>O melhor da culinária japonesa<br>em Maringá. Buffet por Kg &amp; Rodízio Completo.</p>
+      </div>
+      <nav class="footer-links" aria-label="Rodapé">
+        <a href="#experiencias">Buffet &amp; Rodízio</a>
+        <a href="#cardapio">Cardápio</a>
+        <a href="#favoritos">Favoritos</a>
+        <a href="#visite">Horários</a>
+        <a data-ig href="#" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <p class="footer-kanji" aria-hidden="true">東京</p>
+    </div>
+    <div class="wrap footer-bottom">
+      <small>© <span id="year">2026</span> Restaurante Tokyo Maringá. Todos os direitos reservados.</small>
+      <small>Shopping Avenida Center · Maringá · PR</small>
+    </div>
+  </footer>
+
+  <!-- ===================== MOBILE BOTTOM BAR ===================== -->
+  <div class="bbar" id="bbar">
+    <a href="#cardapio" class="bbar-btn">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Cardápio
+    </a>
+    <button type="button" class="bbar-main" data-open-cart>
+      <span class="bbar-count" data-cart-count>0</span>
+      <span class="bbar-label">Meu pedido</span>
+      <b data-cart-total>R$ 0,00</b>
+    </button>
+    <a href="#" class="bbar-btn" data-wa="pedido" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+
+  <!-- ===================== PRODUCT SHEET ===================== -->
+  <div class="overlay" id="overlay" hidden></div>
+
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+    <div class="sheet-handle" id="sheetHandle" aria-hidden="true"><span></span></div>
+    <button type="button" class="sheet-close" data-close aria-label="Fechar"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <div class="sheet-scroll">
+      <div class="sheet-media"><img id="sheetImg" alt=""></div>
+      <div class="sheet-body">
+        <div class="sheet-badges" id="sheetBadges"></div>
+        <h3 id="sheetTitle"></h3>
+        <p class="sheet-pieces" id="sheetPieces"></p>
+        <p class="sheet-desc" id="sheetDesc"></p>
+        <label class="sheet-note">
+          <span>Alguma observação?</span>
+          <textarea id="sheetNote" rows="2" placeholder="Ex.: sem cebolinha, molho à parte…"></textarea>
+        </label>
+        <div class="pairs" id="pairsWrap">
+          <p class="pairs-title">Combina perfeitamente com</p>
+          <div class="pairs-list" id="pairs"></div>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <div class="stepper stepper--lg" id="sheetStepper">
+        <button type="button" data-step="-1" aria-label="Diminuir">−</button>
+        <output id="sheetQty">1</output>
+        <button type="button" data-step="1" aria-label="Aumentar">+</button>
+      </div>
+      <button type="button" class="btn btn-red btn-lg sheet-add" id="sheetAdd">Adicionar <span id="sheetTotal"></span></button>
+    </div>
+  </div>
+
+  <!-- ===================== CART DRAWER ===================== -->
+  <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
+    <header class="drawer-head">
+      <div>
+        <p class="kicker" lang="ja">ご注文</p>
+        <h3 id="drawerTitle">Meu pedido</h3>
+      </div>
+      <button type="button" class="sheet-close" data-close aria-label="Fechar pedido"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </header>
+
+    <div class="drawer-scroll">
+      <div class="cart-empty" id="cartEmpty">
+        <p class="cart-empty-k" lang="ja">空</p>
+        <p><b>Seu pedido está vazio.</b><br>Mas a fome não, né?</p>
+        <a href="#cardapio" class="btn btn-red" data-close>Explorar cardápio</a>
+      </div>
+      <ul class="cart-list" id="cartList"></ul>
+
+      <div class="upsell" id="upsell" hidden>
+        <p class="pairs-title">Que tal fechar com chave de ouro?</p>
+        <div class="pairs-list" id="upsellList"></div>
+      </div>
+
+      <form class="checkout" id="checkout" hidden>
+        <fieldset class="seg">
+          <legend>Como você prefere?</legend>
+          <label><input type="radio" name="mode" value="Retirada no balcão" checked><span>Retirar</span></label>
+          <label><input type="radio" name="mode" value="Entrega (combinar)"><span>Entrega</span></label>
+          <label><input type="radio" name="mode" value="Consumir no local"><span>No local</span></label>
+        </fieldset>
+        <label class="field"><span>Seu nome</span><input type="text" name="name" autocomplete="name" placeholder="Como podemos te chamar?" enterkeyhint="next"></label>
+        <label class="field"><span>Observações do pedido</span><textarea name="obs" rows="2" placeholder="Endereço, troco, horário de retirada…"></textarea></label>
+      </form>
+    </div>
+
+    <footer class="drawer-foot" id="drawerFoot" hidden>
+      <div class="drawer-total"><span>Total estimado</span><b data-cart-total>R$ 0,00</b></div>
+      <button type="button" class="btn btn-wa btn-lg btn-block" id="sendOrder">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Z"/></svg>
+        Enviar pedido pelo WhatsApp
+      </button>
+      <p class="fine">Você confirma valores e disponibilidade direto com a gente no WhatsApp.</p>
+    </footer>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><img alt=""><span></span><button type="button" data-open-cart>Ver pedido</button></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
