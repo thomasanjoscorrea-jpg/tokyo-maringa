@@ -41,6 +41,7 @@
     uniform vec2 uLight;     // posição da luz em UV do canvas
     uniform float uTime;
     uniform float uReveal;   // 0 → 1.4 revelação em tinta
+    uniform float uPick;     // 0 → 1 animação do hashi pegando o niguiri (1 = foto original)
     uniform vec4 uTrail[8];  // xy = ponto, z = força, w = idade (s)
 
     // Simplex noise 2D (Ashima Arts / Stefan Gustavson, MIT)
@@ -74,6 +75,82 @@
       return uv * s + (1.0 - s) * uPos;
     }
 
+
+    // ---------------- Hashi pegando o niguiri ----------------
+    // Geometria medida na foto (pixels do quadro 900x1125, y para baixo).
+    const vec2 IMG  = vec2(900.0, 1125.0);
+    const vec2 UA   = vec2(630.0, 471.0);       // ponto do palito de cima (passa atrás do salmão)
+    const vec2 LA   = vec2(630.0, 515.0);       // ponto do palito de baixo (passa na frente)
+    const vec2 UD   = vec2(0.8312, -0.5558);    // direção dos palitos, rumo à "mão"
+    const vec2 LD   = vec2(0.8079, -0.5893);
+    const float UH  = 15.8;                     // meia espessura perpendicular (px)
+    const float LH  = 9.8;
+    const vec2 HAND = vec2(905.0, 300.0);       // pivô de abrir/fechar
+    const vec2 NIG  = vec2(450.0, 600.0);       // centro do niguiri
+
+    vec2 toPx(vec2 t) { return vec2(t.x * IMG.x, (1.0 - t.y) * IMG.y); }
+    vec2 toUvPx(vec2 p) { return vec2(p.x / IMG.x, 1.0 - p.y / IMG.y); }
+    vec3 texPx(vec2 p) { return texture2D(uTex, toUvPx(p)).rgb; }
+    vec2 rot(vec2 p, vec2 c, float a) { float sn = sin(a), cs = cos(a); p -= c; return vec2(cs * p.x - sn * p.y, sn * p.x + cs * p.y) + c; }
+    float band(vec2 p, vec2 A, vec2 D, float h) { vec2 q = p - A; return 1.0 - smoothstep(h - 3.0, h + 4.0, abs(q.x * D.y - q.y * D.x)); }
+    float salmonLike(vec3 c) { return smoothstep(0.62, 0.75, c.r) * smoothstep(0.30, 0.42, c.r - c.g); }
+
+    // máscaras dos palitos na foto original (afinam até a ponta)
+    float maskU(vec2 p, float k) { float t = dot(p - UA, UD); float h = UH * k * mix(0.7, 1.0, smoothstep(-192.0, -100.0, t)); return band(p, UA, UD, h) * smoothstep(-196.0, -186.0, t); }
+    float maskL(vec2 p, float k) { float t = dot(p - LA, LD); float h = LH * k * mix(0.7, 1.0, smoothstep(-208.0, -120.0, t)); return band(p, LA, LD, h) * smoothstep(-212.0, -202.0, t); }
+
+    // camada do niguiri: a foto sem os palitos (buracos preenchidos com o lado oposto)
+    vec3 nigiriLayer(vec2 p) {
+      vec3 c = texPx(p);
+      // palito de baixo: copia o lado de baixo (fundo ou arroz); palito de cima: só existe sobre o fundo
+      float dark = 1.0 - smoothstep(0.22, 0.40, max(c.r, max(c.g, c.b)));
+      // palito de baixo (na frente): núcleo sempre; anel externo só se for sombra/borda escura
+      // sombra do palito sobre o salmão é um vermelho escuro: limite mais alto só aqui
+      float darkL = 1.0 - smoothstep(0.38, 0.58, max(c.r, max(c.g, c.b)));
+      float wl = max(maskL(p, 1.05), maskL(p, 1.9) * darkL);
+      // palito de cima: no trecho atrás do salmão (t < -100) não há madeira visível para apagar
+      float tu = dot(p - UA, UD);
+      // sobre o fundo: apaga tudo que não for salmão claro (inclui o brilho da borda da madeira)
+      float notSalmon = 1.0 - smoothstep(0.70, 0.85, c.r);
+      float wu = max(maskU(p, 1.05), maskU(p, 2.0) * max(dark, notSalmon)) * smoothstep(-106.0, -96.0, tu);
+      vec3 bg = texPx(vec2(760.0, 190.0));
+      c = mix(c, texPx(p + vec2(0.5893, 0.8079) * (LH * 1.9 + 10.0)), wl);
+      c = mix(c, bg, wu);
+      return c;
+    }
+    // palito de cima: a ponta escondida atrás do salmão é reconstruída espelhando a madeira visível
+    vec4 stickU(vec2 p) {
+      float t = dot(p - UA, UD);
+      vec2 q = t < -100.0 ? p + UD * (2.0 * (-100.0 - t)) : p;
+      vec3 c = texPx(q);
+      return vec4(c, maskU(p, 1.05));
+    }
+    vec4 stickL(vec2 p) { return vec4(texPx(p), maskL(p, 1.15) * (1.0 - maskU(p, 1.0))); }
+
+    float easeOutBack(float x) { float c1 = 1.70158; float c3 = c1 + 1.0; float y = x - 1.0; return 1.0 + c3 * y * y * y + c1 * y * y; }
+
+    // compõe a cena no instante uPick (entrada em UV da textura, saída em cor)
+    vec3 scene(vec2 t) {
+      vec2 P = toPx(t);
+      float p = uPick;
+      float a = 1.0 - pow(1.0 - clamp(p / 0.42, 0.0, 1.0), 3.0);    // chegada
+      float close = smoothstep(0.36, 0.52, p);                       // fechar no niguiri
+      float l = easeOutBack(clamp((p - 0.55) / 0.45, 0.0, 1.0));     // levantar com leve balanço
+      vec2 lift = vec2(-10.0, 80.0) * (1.0 - l);
+      float tilt = radians(-6.0) * (1.0 - l);
+      vec2 axisOff = normalize(UD + LD) * 560.0 * (1.0 - a);
+      float open = 1.0 - close;
+
+      vec3 col = nigiriLayer(rot(P - lift, NIG, -tilt));
+      float fg = smoothstep(0.10, 0.20, max(col.r, max(col.g, col.b)));
+      vec2 G = P - lift - axisOff;
+      vec4 L = stickL(rot(G, HAND, -radians(5.0) * open));
+      col = mix(col, L.rgb, L.a);
+      vec4 U = stickU(rot(G, HAND, radians(3.0) * open));
+      col = mix(col, U.rgb, U.a * (1.0 - fg));                      // fica atrás do salmão
+      return col;
+    }
+
     void main() {
       vec2 uv = vUv;
       float aspect = uRes.x / uRes.y;
@@ -100,8 +177,12 @@
 
       // 3) amostra com leve aberração cromática proporcional à distorção
       vec2 base = cover(uv + disp);
+      vec3 col;
+      if (uPick < 1.0) {
+        col = scene(base);
+      } else {
       vec2 ca = normalize(uv - 0.5 + 1e-4) * (length(disp) * 0.45);
-      vec3 col = vec3(texture2D(uTex, cover(uv + disp + ca)).r,
+      col = vec3(texture2D(uTex, cover(uv + disp + ca)).r,
                       texture2D(uTex, base).g,
                       texture2D(uTex, cover(uv + disp - ca)).b);
 
@@ -119,6 +200,7 @@
       // máscara do salmão: tons laranja/vermelhos com alguma luz
       float salmon = smoothstep(0.08, 0.30, col.r - col.g) * smoothstep(0.22, 0.55, lum(col));
       col += spec * salmon * vec3(1.0, 0.94, 0.88) * 0.28;
+      }
       col += energy * 0.035 * vec3(1.0, 0.5, 0.35);
 
       // 5) revelação em tinta sumi-ê, do centro do prato para fora
@@ -162,7 +244,7 @@
   gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
   const U = {};
-  ['uTex', 'uRes', 'uImg', 'uTexel', 'uPos', 'uLight', 'uTime', 'uReveal', 'uTrail'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
+  ['uTex', 'uRes', 'uImg', 'uTexel', 'uPick', 'uPos', 'uLight', 'uTime', 'uReveal', 'uTrail'].forEach((n) => { U[n] = gl.getUniformLocation(prog, n); });
 
   /* ---------------------------- Estado ---------------------------- */
   const TRAIL = 8;
@@ -173,6 +255,7 @@
   let reveal = 0, revealStart = 0, t0 = performance.now(), last = t0;
   let running = false, visible = true, raf = 0, ready = false;
   let frames = 0;
+  let forcedPick = null;   // para testes quadro a quadro
 
   function sizeCanvas() {
     const mobile = matchMedia('(max-width: 860px)').matches;
@@ -221,8 +304,11 @@
     // revelação em tinta começa quando o preloader sai
     if (document.body.classList.contains('loaded')) {
       if (!revealStart) revealStart = now;
-      reveal = Math.min(1.4, ((now - revealStart) / 1800) * 1.4);
+      reveal = Math.min(1.4, ((now - revealStart) / 900) * 1.4);
     }
+    // hashi: começa logo após a tinta, dura 2,6 s e termina exatamente na foto original
+    const pick = forcedPick !== null ? forcedPick : (revealStart ? Math.min(1, Math.max(0, (now - revealStart - 250) / 2600)) : 0);
+    gl.uniform1f(U.uPick, pick);
 
     // rastro: decai de forma independente da taxa de quadros
     const decay = Math.pow(0.955, dt * 60);
@@ -316,6 +402,7 @@
   // para testes: window.__heroGL.fps()
   window.__heroGL = {
     estado: () => wrap.dataset.gl,
+    congelar: (p) => { forcedPick = p; },
     fps: () => new Promise((res) => { const f0 = frames, s = performance.now(); setTimeout(() => res(Math.round((frames - f0) / ((performance.now() - s) / 1000))), 2000); }),
   };
 })();
