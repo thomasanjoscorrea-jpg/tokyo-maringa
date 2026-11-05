@@ -8,6 +8,10 @@
 window.TOKYO_CONFIG = {
   // EXEMPLO: WhatsApp no formato internacional, só números (55 + DDD + número)
   whatsapp: '5544999999999',
+
+  // Efeito WebGL na foto da abertura (luz, ondas e revelação em tinta).
+  // false = volta à foto estática. Também dá para comparar abrindo o site com ?gl=0
+  heroWebGL: true,
   instagram: 'https://www.instagram.com/tokyomaringa/',
   mapsQuery: 'Shopping Avenida Center, Av. São Paulo, 743, Maringá - PR',
 
