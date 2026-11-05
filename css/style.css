@@ -648,10 +648,16 @@ textarea::placeholder, .field input::placeholder { color: var(--paper-mute); }
   .hide-mobile { display: none !important; }
   .nav-actions .status { display: none; }
   .brand img { width: 36px; height: 36px; }
+  /* o texto sempre começa abaixo do niguiri; em telas baixas a abertura cresce em vez de sobrepor */
   .hero { align-items: flex-end; padding-bottom: 72px; }
-  .hero-bg { inset: 0 0 38% 0; }
+  /* celular: "zoom de câmera" no niguiri (≈ 3/4 da largura), hashi saindo pela direita */
+  /* foto cobrindo a abertura inteira, atrás do texto: o niguiri fica na altura do título */
+  .hero-bg { inset: -6svh auto auto -47vw; width: 190vw; height: 100svh; }
   .hero-bg img { height: 100%; object-position: 60% 50%; }
-  .hero-shade { background: linear-gradient(0deg, var(--ink) 38%, rgba(14,13,12,.6) 62%, rgba(14,13,12,.1) 85%, rgba(14,13,12,.5) 100%); }
+  /* escurece só onde ficam parágrafo e botões; o título flutua sobre o peixe */
+  .hero-shade { background: linear-gradient(0deg, var(--ink) 0%, rgba(14,13,12,.82) 26%, rgba(14,13,12,.35) 50%, rgba(14,13,12,.12) 70%, rgba(14,13,12,.45) 100%); }
+  .hero-title { text-shadow: 0 2px 28px rgba(0,0,0,.55); }
+  .hero-sub { text-shadow: 0 1px 14px rgba(0,0,0,.7); }
   .hero-vert { display: none; }
   .hero-gl { height: 100%; }
   .cine-frame { height: 72svh; }

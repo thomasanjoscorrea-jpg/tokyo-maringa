@@ -271,8 +271,8 @@
   let forcedPick = null;   // para testes quadro a quadro
 
   function sizeCanvas() {
-    const mobile = matchMedia('(max-width: 860px)').matches;
-    let dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.5);
+    // celular com a foto ampliada precisa da mesma nitidez do desktop
+    let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const w = canvas.clientWidth, h = canvas.clientHeight;
     // teto de ~2,4 milhões de pixels para manter 60 fps em GPUs modestas
     const max = 2.4e6;
