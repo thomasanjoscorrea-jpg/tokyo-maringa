@@ -93,6 +93,8 @@
     vec3 texPx(vec2 p) { return texture2D(uTex, toUvPx(p)).rgb; }
     vec2 rot(vec2 p, vec2 c, float a) { float sn = sin(a), cs = cos(a); p -= c; return vec2(cs * p.x - sn * p.y, sn * p.x + cs * p.y) + c; }
     float band(vec2 p, vec2 A, vec2 D, float h) { vec2 q = p - A; return 1.0 - smoothstep(h - 3.0, h + 4.0, abs(q.x * D.y - q.y * D.x)); }
+    // 1 dentro da foto, 0 fora (evita repetir a borda da textura)
+    float inside(vec2 p) { vec2 b = step(vec2(0.0), p) * step(p, IMG); return b.x * b.y; }
     float salmonLike(vec3 c) { return smoothstep(0.62, 0.75, c.r) * smoothstep(0.30, 0.42, c.r - c.g); }
 
     // máscaras dos palitos na foto original (afinam até a ponta)
@@ -101,6 +103,7 @@
 
     // camada do niguiri: a foto sem os palitos (buracos preenchidos com o lado oposto)
     vec3 nigiriLayer(vec2 p) {
+      if (inside(p) < 0.5) return texPx(vec2(760.0, 190.0));
       vec3 c = texPx(p);
       // palito de baixo: copia o lado de baixo (fundo ou arroz); palito de cima: só existe sobre o fundo
       float dark = 1.0 - smoothstep(0.22, 0.40, max(c.r, max(c.g, c.b)));
@@ -123,31 +126,41 @@
       float t = dot(p - UA, UD);
       vec2 q = t < -100.0 ? p + UD * (2.0 * (-100.0 - t)) : p;
       vec3 c = texPx(q);
-      return vec4(c, maskU(p, 1.05));
+      return vec4(c, maskU(p, 1.05) * inside(p));
     }
-    vec4 stickL(vec2 p) { return vec4(texPx(p), maskL(p, 1.15) * (1.0 - maskU(p, 1.0))); }
+    vec4 stickL(vec2 p) { return vec4(texPx(p), maskL(p, 1.15) * (1.0 - maskU(p, 1.0)) * inside(p)); }
 
-    float easeOutBack(float x) { float c1 = 1.70158; float c3 = c1 + 1.0; float y = x - 1.0; return 1.0 + c3 * y * y * y + c1 * y * y; }
+    float easeOutCubic(float x) { float y = 1.0 - x; return 1.0 - y * y * y; }
+    float easeInOutCubic(float x) { float y = -2.0 * x + 2.0; return x < 0.5 ? 4.0 * x * x * x : 1.0 - y * y * y * 0.5; }
 
-    // compõe a cena no instante uPick (entrada em UV da textura, saída em cor)
+    // Coreografia (uPick 0 → 1):
+    //  0.00–0.40  o niguiri está embaixo ("no prato"); o hashi desce do topo, quase na vertical
+    //  0.40–0.50  pegada: leve pressão para baixo
+    //  0.50–1.00  os dois sobem juntos até a pose da foto, com balanço amortecido do niguiri
     vec3 scene(vec2 t) {
       vec2 P = toPx(t);
       float p = uPick;
-      float a = 1.0 - pow(1.0 - clamp(p / 0.42, 0.0, 1.0), 3.0);    // chegada
-      float close = smoothstep(0.36, 0.52, p);                       // fechar no niguiri
-      float l = easeOutBack(clamp((p - 0.55) / 0.45, 0.0, 1.0));     // levantar com leve balanço
-      vec2 lift = vec2(-10.0, 80.0) * (1.0 - l);
-      float tilt = radians(-6.0) * (1.0 - l);
-      vec2 axisOff = normalize(UD + LD) * 560.0 * (1.0 - a);
-      float open = 1.0 - close;
+      const vec2 LOW  = vec2(0.0, 360.0);        // niguiri começa 360 px abaixo, saindo do escuro
+      const vec2 FROM = vec2(130.0, -1060.0);    // hashi começa acima da tela (relativo à pegada)
+      const vec2 GRIP = vec2(515.0, 560.0);      // ponto de pegada na pose final
 
-      vec3 col = nigiriLayer(rot(P - lift, NIG, -tilt));
+      float d = easeOutCubic(clamp(p / 0.40, 0.0, 1.0));
+      float press = sin(clamp((p - 0.40) / 0.10, 0.0, 1.0) * 3.14159) * 7.0;
+      float q = clamp((p - 0.50) / 0.50, 0.0, 1.0);
+      float up = easeInOutCubic(q);
+      vec2 lift = LOW * (1.0 - up) + vec2(0.0, press);
+      // balanço do niguiri pendurado no hashi: zera exatamente em q = 1
+      float swing = radians(5.0) * sin(q * 9.0) * (1.0 - q) * (1.0 - q) * smoothstep(0.0, 0.08, q);
+
+      // niguiri: desloca + gira em torno da pegada
+      vec3 col = nigiriLayer(rot(P - lift, GRIP, -swing));
       float fg = smoothstep(0.10, 0.20, max(col.r, max(col.g, col.b)));
-      vec2 G = P - lift - axisOff;
-      vec4 L = stickL(rot(G, HAND, -radians(5.0) * open));
+      // hashi: desce até a pegada e depois acompanha a subida (gira junto no balanço, metade do ângulo)
+      vec2 G = rot(P - lift - FROM * (1.0 - d), GRIP, -swing * 0.5);
+      vec4 L = stickL(G);
       col = mix(col, L.rgb, L.a);
-      vec4 U = stickU(rot(G, HAND, radians(3.0) * open));
-      col = mix(col, U.rgb, U.a * (1.0 - fg));                      // fica atrás do salmão
+      vec4 U = stickU(G);
+      col = mix(col, U.rgb, U.a * (1.0 - fg));   // palito de trás some atrás do salmão
       return col;
     }
 
@@ -306,8 +319,8 @@
       if (!revealStart) revealStart = now;
       reveal = Math.min(1.4, ((now - revealStart) / 900) * 1.4);
     }
-    // hashi: começa logo após a tinta, dura 2,6 s e termina exatamente na foto original
-    const pick = forcedPick !== null ? forcedPick : (revealStart ? Math.min(1, Math.max(0, (now - revealStart - 250) / 2600)) : 0);
+    // hashi: começa logo após a tinta, dura 3 s e termina exatamente na foto original
+    const pick = forcedPick !== null ? forcedPick : (revealStart ? Math.min(1, Math.max(0, (now - revealStart - 250) / 3000)) : 0);
     gl.uniform1f(U.uPick, pick);
 
     // rastro: decai de forma independente da taxa de quadros
