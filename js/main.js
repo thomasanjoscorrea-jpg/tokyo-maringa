@@ -342,6 +342,7 @@
     $$('[data-cart-count]').forEach((el) => { el.textContent = n; });
     $$('[data-cart-total]').forEach((el) => { el.textContent = total; });
     body.classList.toggle('has-items', n > 0);
+    $('.cart-btn').setAttribute('aria-label', `Abrir meu pedido, ${n} ${n === 1 ? 'item' : 'itens'}`);
     $('.bbar-label').textContent = n ? 'Ver meu pedido' : 'Meu pedido';
     renderCart();
   }
@@ -419,13 +420,13 @@
     if (d.tags.includes('chef')) b.push('<span class="badge badge--chef">Chef indica</span>');
     if (d.tags.includes('spicy')) b.push('<span class="badge">🌶️ Picante</span>');
     if (d.tags.includes('veg')) b.push('<span class="badge">🌿 Veg</span>');
-    return b.length ? `<span class="badges">${b.join('')}</span>` : '';
+    return b.length ? `<span class="badges" aria-hidden="true">${b.join('')}</span>` : '';
   }
   function dishHTML(d, i) {
     return `<article class="dish${qty(d.id) ? ' in-cart' : ''}" style="--i:${Math.min(i, 12)}" data-id="${d.id}">
       <button class="dish-media" type="button" data-open="${d.id}" aria-label="Ver detalhes de ${esc(d.name)}">
-        <img src="${d.img}" alt="${esc(d.name)}" loading="lazy" decoding="async">${badgesHTML(d)}<span class="dish-view">Ver detalhes</span>
-      </button>
+        <img src="${d.img}" alt="" loading="lazy" decoding="async">
+      </button>${badgesHTML(d)}
       <div class="dish-body">
         <div class="dish-top"><h3>${esc(d.name)}</h3><span class="dish-pieces">${esc(d.pieces)}</span></div>
         <p>${esc(d.desc)}</p>
@@ -649,7 +650,7 @@
 
   function pairHTML(id) {
     const d = byId[id];
-    return `<button type="button" class="pair" data-pair="${id}" aria-label="Adicionar ${esc(d.name)}, ${brl(d.price)}"><img src="${d.img}" alt="" loading="lazy"><div><b>${esc(d.name)}</b><small>${esc(d.pieces)}, ${brl(d.price)}</small></div><i aria-hidden="true">+</i></button>`;
+    return `<button type="button" class="pair" data-pair="${id}"><span class="sr-only">Adicionar </span><img src="${d.img}" alt="" loading="lazy"><div><b>${esc(d.name)}</b><small>${esc(d.pieces)}, ${brl(d.price)}</small></div><i aria-hidden="true">+</i></button>`;
   }
 
   function updateSheetTotal() {
@@ -666,7 +667,7 @@
     $('#sheetTitle').textContent = d.name;
     $('#sheetPieces').textContent = `${d.pieces}, ${brl(d.price)}`;
     $('#sheetDesc').textContent = d.desc;
-    $('#sheetBadges').innerHTML = badgesHTML(d).replace(/^<span class="badges">|<\/span>$/g, '');
+    $('#sheetBadges').innerHTML = badgesHTML(d).replace(/^<span class="badges"[^>]*>|<\/span>$/g, '');
     $('#sheetNote').value = (cart[id] && cart[id].note) || '';
     const pairs = (d.pairs || []).filter((p) => byId[p]);
     $('#pairsWrap').hidden = !pairs.length;

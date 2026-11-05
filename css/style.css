@@ -335,7 +335,7 @@ html:not(.js) .preloader { display: none; }
 .dish-media { position: relative; display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-radius: var(--radius); background: var(--ink-2); }
 .dish-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease-out); }
 .dish.in-cart .dish-media { box-shadow: 0 0 0 2px var(--red); }
-.badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 1; }
+.badges { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; z-index: 1; pointer-events: none; }
 .badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 400; letter-spacing: 0.04em; background: rgba(14,13,12,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: var(--paper); }
 .badges .badge:nth-child(n+2) { display: none; }
 .badge--top::before, .badge--chef::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
@@ -604,7 +604,8 @@ textarea::placeholder, .field input::placeholder { color: var(--paper-mute); }
   font-size: clamp(30px, 4.6vw, 62px); line-height: 1.25; letter-spacing: -0.01em;
   text-wrap: pretty;
 }
-.manifesto-text .w { opacity: 0.16; transition: opacity 260ms linear; }
+/* 0.42 mantém contraste ≥ 3:1 (texto grande) mesmo com a palavra "apagada" */
+.manifesto-text .w { opacity: 0.42; transition: opacity 260ms linear; }
 .manifesto-text .w.on { opacity: 1; }
 .manifesto-text .w.hl { color: var(--accent); font-style: italic; }
 
@@ -695,7 +696,7 @@ textarea::placeholder, .field input::placeholder { color: var(--paper-mute); }
   .cat-title:first-child { margin-top: 0; }
   .dish { flex-direction: row; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
   .dish-media { width: 104px; height: 104px; flex-shrink: 0; aspect-ratio: auto; border-radius: 14px; }
-  .badges { top: 6px; left: 6px; }
+  .badges { top: 22px; left: 6px; }
   .badge { font-size: 0; padding: 0; width: 18px; height: 18px; justify-content: center; }
   .badge::before { margin: 0; }
   .badges .badge:not(.badge--top):not(.badge--chef) { display: none; }
