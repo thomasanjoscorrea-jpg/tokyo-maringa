@@ -236,36 +236,6 @@
   $$('a', mmenu).forEach((a) => a.addEventListener('click', () => setMenu(false)));
 
   /* ------------------------------------------------------------------
-     Cursor (só mouse): ponto vermelho que vira "Ver" sobre os pratos
-     ------------------------------------------------------------------ */
-  if (!reduce && matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const cur = $('#cursor');
-    const dot = $('span', cur);
-    const pos = { x: -100, y: -100, tx: -100, ty: -100 };
-    body.classList.add('has-cursor');
-    const tick = () => {
-      pos.x += (pos.tx - pos.x) * 0.22;
-      pos.y += (pos.ty - pos.y) * 0.22;
-      cur.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
-      requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-    addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse') return;
-      pos.tx = e.clientX; pos.ty = e.clientY;
-      const t = e.target;
-      const view = t.closest('.dish, .fav, .ig, .mode-media');
-      const link = !view && t.closest('a, button, input, textarea, label, [role="tab"]');
-      const label = view ? (view.classList.contains('ig') ? 'Seguir' : 'Ver') : '';
-      if (dot.dataset.label !== label) dot.dataset.label = label;
-      cur.classList.toggle('is-view', !!view && !t.closest('.ctl'));
-      cur.classList.toggle('is-link', !!link || !!t.closest('.ctl'));
-    }, { passive: true });
-    document.addEventListener('pointerleave', () => cur.classList.add('is-hidden'));
-    document.addEventListener('pointerenter', () => cur.classList.remove('is-hidden'));
-  }
-
-  /* ------------------------------------------------------------------
      Reveal on scroll + contador + mapa preguiçoso
      ------------------------------------------------------------------ */
   // .reveal-img usa clip-path, que zera a área medida pelo IntersectionObserver;
